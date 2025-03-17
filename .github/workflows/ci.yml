@@ -20,4 +20,5 @@ jobs:
               run: docker build -t alvaroherrero/entrena-sync-apigateway .
             - name: Push to Dockerhub
               run: docker push alvaroherrero/entrena-sync-apigateway:latest
-# dummy
+
+
