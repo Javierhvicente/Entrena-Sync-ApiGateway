@@ -21,6 +21,8 @@ extra["springCloudVersion"] = "2024.0.0"
 
 dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-gateway-mvc")
+    implementation("org.springframework.cloud:spring-cloud-starter-security:2.2.5.RELEASE")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client:3.4.3")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
