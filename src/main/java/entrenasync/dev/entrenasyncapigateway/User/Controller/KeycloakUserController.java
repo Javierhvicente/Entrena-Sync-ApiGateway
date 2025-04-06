@@ -27,19 +27,19 @@ public class KeycloakUserController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<UserRepresentation> getUserByUsername(@PathVariable String username){
+    public ResponseEntity<UserResponse> getUserByUsername(@PathVariable String username){
         return ResponseEntity.ok(keycloakUserService.getUserByUsername(username));
     }
 
     @PreAuthorize("hasRole('admin')")
     @PostMapping
-    public ResponseEntity<UserRepresentation> createUser(@RequestBody @Valid UserRequest userRequest){
+    public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequest userRequest){
         return ResponseEntity.ok(keycloakUserService.createUser(userRequest));
     }
 
     @PreAuthorize("hasRole('admin')")
     @PutMapping("/{id}")
-    public ResponseEntity<UserRepresentation> updateUser(@PathVariable String userId, @RequestBody @Valid UserRequest userRequest){
+    public ResponseEntity<UserResponse> updateUser(@PathVariable String userId, @RequestBody @Valid UserRequest userRequest){
         return ResponseEntity.ok(keycloakUserService.updateUser(userRequest, userId));
     }
 
