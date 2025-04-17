@@ -11,5 +11,5 @@ spring.cloud.gateway.mvc.routes[1].uri=http://localhost:8081
 spring.cloud.gateway.mvc.routes[1].predicates[0]=Path=/workers/**
 
 spring.cloud.gateway.mvc.routes[2].id=Workouts-MicroService
-spring.cloud.gateway.mvc.routes[2].uri=https://entrena-sync-workouts-microservice.onrender.com
+spring.cloud.gateway.mvc.routes[2].uri=https://entrenasync-client-microservice.onrender.com
 spring.cloud.gateway.mvc.routes[2].predicates[0]=Path=/Workouts/**
