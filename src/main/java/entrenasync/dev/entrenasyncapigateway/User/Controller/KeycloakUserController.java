@@ -19,7 +19,11 @@ import static org.springframework.security.authorization.AuthorityReactiveAuthor
 @RequestMapping("/keycloak/user")
 public class KeycloakUserController {
 
-    private IKeycloakUserService keycloakUserService;
+    private final IKeycloakUserService keycloakUserService;
+
+    public KeycloakUserController(IKeycloakUserService keycloakUserService) {
+        this.keycloakUserService = keycloakUserService;
+    }
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers(){
@@ -31,19 +35,16 @@ public class KeycloakUserController {
         return ResponseEntity.ok(keycloakUserService.getUserByUsername(username));
     }
 
-    @PreAuthorize("hasRole('admin')")
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequest userRequest){
         return ResponseEntity.ok(keycloakUserService.createUser(userRequest));
     }
 
-    @PreAuthorize("hasRole('admin')")
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable String userId, @RequestBody @Valid UserRequest userRequest){
         return ResponseEntity.ok(keycloakUserService.updateUser(userRequest, userId));
     }
 
-    @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/{username}")
     public ResponseEntity<Void> deleteUser(@PathVariable String username){
         keycloakUserService.deleteUser(username);
