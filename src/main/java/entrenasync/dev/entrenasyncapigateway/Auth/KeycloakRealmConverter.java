@@ -1,16 +1,20 @@
 package entrenasync.dev.entrenasyncapigateway.Auth;
 
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Component
+@Primary
 public class KeycloakRealmConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
 
     @Override
