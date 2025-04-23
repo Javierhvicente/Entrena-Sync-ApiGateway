@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Component
+@Component("customKeycloakRealmConverter")
 @Primary
 public class KeycloakRealmConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
 

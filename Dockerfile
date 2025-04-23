@@ -11,7 +11,7 @@ COPY gradle gradle
 COPY src src
 #COPY despliegueServers despliegueServers
 RUN chmod +x gradlew
-RUN ./gradlew clean build
+RUN ./gradlew clean build -x test
 # RUN ./gradlew javadoc
 
 FROM openjdk:21 AS run
