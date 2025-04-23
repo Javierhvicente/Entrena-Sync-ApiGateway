@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 @EnableWebFluxSecurity
 public class SecurityConfiguration {
 
-    @Bean
+    @Bean("securityWebFilterChainEntrenaSync")
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity) {
         return httpSecurity
                 .authorizeExchange(exchanges -> exchanges
@@ -34,14 +34,14 @@ public class SecurityConfiguration {
                 .build();
     }
 
-    @Bean
+    @Bean("jwtAuthenticationConverterEntrenaSync")
     public ReactiveJwtAuthenticationConverterAdapter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(new KeycloakRealmConverter());
         return new ReactiveJwtAuthenticationConverterAdapter(converter);
     }
 
-    @Bean
+    @Bean("accessDeniedHandlerEntrenaSync")
     public ServerAccessDeniedHandler accessDeniedHandler() {
         return (exchange, denied) -> {
             exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
@@ -51,7 +51,7 @@ public class SecurityConfiguration {
         };
     }
 
-    @Bean
+    @Bean("authenticationEntryPointEntrenaSync")
     public ServerAuthenticationEntryPoint authenticationEntryPoint() {
         return (exchange, ex) -> {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
