@@ -1,6 +1,6 @@
 package entrenasync.dev.entrenasyncapigateway.Auth.Controller;
 
-import entrenasync.dev.entrenasyncapigateway.Auth.Services.ISessionService;
+import entrenasync.dev.entrenasyncapigateway.Auth.Services.SessionService;
 import entrenasync.dev.entrenasyncapigateway.Auth.dto.LoginRequest;
 import entrenasync.dev.entrenasyncapigateway.Auth.dto.LoginResponse;
 import jakarta.validation.Valid;
@@ -13,9 +13,9 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/session")
 public class SessionController {
-    private final ISessionService sessionService;
+    private final SessionService sessionService;
 
-    public SessionController(ISessionService sessionService) {
+    public SessionController(SessionService sessionService) {
         this.sessionService = sessionService;
     }
 

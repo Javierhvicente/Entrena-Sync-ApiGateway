@@ -2,26 +2,20 @@ package entrenasync.dev.entrenasyncapigateway.User.Controller;
 
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserRequest;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserResponse;
-import entrenasync.dev.entrenasyncapigateway.User.Services.IKeycloakUserService;
+import entrenasync.dev.entrenasyncapigateway.User.Services.KeycloakUserService;
 import jakarta.validation.Valid;
-import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static org.springframework.security.authorization.AuthorityReactiveAuthorizationManager.hasRole;
 
 @RestController
 @RequestMapping("/keycloak/user")
 public class KeycloakUserController {
 
-    private final IKeycloakUserService keycloakUserService;
+    private final KeycloakUserService keycloakUserService;
 
-    public KeycloakUserController(IKeycloakUserService keycloakUserService) {
+    public KeycloakUserController(KeycloakUserService keycloakUserService) {
         this.keycloakUserService = keycloakUserService;
     }
 
