@@ -13,6 +13,8 @@ import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
 import reactor.core.publisher.Mono;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfiguration {
@@ -20,6 +22,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity) {
         return httpSecurity
+                .cors(withDefaults())
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/keycloak/*").hasRole("admin")
                         .pathMatchers("/workers/**").hasRole("admin")
