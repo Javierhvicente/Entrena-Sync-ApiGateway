@@ -16,4 +16,6 @@ public class KeycloakProperties {
     private String url;
     private String grantType;
     private String redirectUri;
+    private String username;
+    private String password;
 }
