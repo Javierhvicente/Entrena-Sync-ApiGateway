@@ -1,9 +1,9 @@
 package entrenasync.dev.entrenasyncapigateway.User.Services;
 
-import entrenasync.dev.entrenasyncapigateway.Auth.KeycloakProvider;
 import entrenasync.dev.entrenasyncapigateway.Exceptions.KeyCloakUserExceptions;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserRequest;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserResponse;
+import entrenasync.dev.entrenasyncapigateway.User.Services.KeycloakUserService;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.OAuth2Constants;
@@ -14,7 +14,6 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,10 +23,17 @@ import static entrenasync.dev.entrenasyncapigateway.User.Mappers.UserMappers.toU
 @Slf4j
 public class KeycloakUserServiceImpl implements KeycloakUserService {
 
+    private final RealmResource realmResource;
+    private final UsersResource usersResource;
+
+    public KeycloakUserServiceImpl(RealmResource realmResource, UsersResource usersResource) {
+        this.realmResource = realmResource;
+        this.usersResource = usersResource;
+    }
+
     @Override
     public List<UserResponse> getAllUsers() {
-        return KeycloakProvider.getRealmResource()
-                .users()
+        return usersResource
                 .list()
                 .stream()
                 .map(user -> new UserResponse(
@@ -43,8 +49,7 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
 
     @Override
     public UserResponse getUserByUsername(String username) {
-        UserRepresentation user = KeycloakProvider.getRealmResource()
-                .users()
+        UserRepresentation user = usersResource
                 .searchByUsername(username, true)
                 .stream()
                 .findFirst()
@@ -55,8 +60,6 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
 
     @Override
     public UserResponse createUser(UserRequest userRequest) {
-        var usersResource = KeycloakProvider.getRealmResource().users();
-
         var conflictUser = usersResource.search(userRequest.getUsername(), true)
                 .stream()
                 .findFirst()
@@ -75,7 +78,6 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
             throw new KeyCloakUserExceptions.KeycloakNotMatchingPasswords("Passwords do not match");
         }
 
-        UsersResource userResource = KeycloakProvider.getUserResource();
         UserRepresentation user = new UserRepresentation();
         user.setUsername(userRequest.getUsername());
         user.setEmail(userRequest.getEmail());
@@ -83,7 +85,7 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
         user.setLastName(userRequest.getLastName());
         user.setEnabled(true);
 
-        Response response = userResource.create(user);
+        Response response = usersResource.create(user);
         var status = response.getStatus();
 
         if (status == 201) {
@@ -95,10 +97,9 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
             credential.setValue(userRequest.getPassword());
             credential.setTemporary(false);
 
-            userResource.get(userId).resetPassword(credential);
+            usersResource.get(userId).resetPassword(credential);
 
             List<RoleRepresentation> roleRepresentations;
-            RealmResource realmResource = KeycloakProvider.getRealmResource();
 
             if (userRequest.getRoles() == null || userRequest.getRoles().isEmpty()) {
                 roleRepresentations = List.of(realmResource.roles().get("user").toRepresentation());
@@ -114,7 +115,7 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
 
             realmResource.users().get(userId).roles().realmLevel().add(roleRepresentations);
 
-            return toUserResponse(realmResource.users().get(userId).toRepresentation());
+            return toUserResponse(usersResource.get(userId).toRepresentation());
         } else {
             throw new KeyCloakUserExceptions.KeycloakOperationException("Failed to create user: " + response.readEntity(String.class));
         }
@@ -122,29 +123,62 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
 
     @Override
     public UserResponse updateUser(UserRequest userRequest, String userId) {
-        CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
-        credentialRepresentation.setTemporary(false);
-        credentialRepresentation.setType(OAuth2Constants.PASSWORD);
-        credentialRepresentation.setValue(userRequest.getPassword());
+        // Verifica si el usuario existe
+        UserRepresentation existingUser = usersResource.get(userId).toRepresentation();
+        if (existingUser == null) {
+            throw new KeyCloakUserExceptions.UserNotFoundException(userId);
+        }
 
-        UserRepresentation user = new UserRepresentation();
-        user.setUsername(userRequest.getUsername());
-        user.setEmail(userRequest.getEmail());
-        user.setFirstName(userRequest.getFirstName());
-        user.setLastName(userRequest.getLastName());
-        user.setEnabled(true);
-        user.setCredentials(Collections.singletonList(credentialRepresentation));
+        // Validar si las contraseñas coinciden (si es que vienen)
+        if (userRequest.getPassword() != null && !userRequest.getPassword().equals(userRequest.getPasswordConfirmation())) {
+            throw new KeyCloakUserExceptions.KeycloakNotMatchingPasswords("Passwords do not match");
+        }
 
-        KeycloakProvider.getUserResource().get(userId).update(user);
+        // Actualizar campos
+        existingUser.setUsername(userRequest.getUsername());
+        existingUser.setEmail(userRequest.getEmail());
+        existingUser.setFirstName(userRequest.getFirstName());
+        existingUser.setLastName(userRequest.getLastName());
 
-        UserRepresentation updated = KeycloakProvider.getUserResource().get(userId).toRepresentation();
-        return toUserResponse(updated);
+        usersResource.get(userId).update(existingUser);
+
+        // Actualizar contraseña si se proporciona
+        if (userRequest.getPassword() != null && !userRequest.getPassword().isBlank()) {
+            CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+            credentialRepresentation.setTemporary(false);
+            credentialRepresentation.setType(OAuth2Constants.PASSWORD);
+            credentialRepresentation.setValue(userRequest.getPassword());
+
+            usersResource.get(userId).resetPassword(credentialRepresentation);
+        }
+
+        // Actualizar roles si vienen
+        if (userRequest.getRoles() != null && !userRequest.getRoles().isEmpty()) {
+            List<RoleRepresentation> roles = realmResource.roles()
+                    .list()
+                    .stream()
+                    .filter(role -> userRequest.getRoles()
+                            .stream()
+                            .anyMatch(reqRole -> reqRole.equalsIgnoreCase(role.getName())))
+                    .toList();
+
+            usersResource.get(userId).roles().realmLevel().remove(
+                    usersResource.get(userId).roles().realmLevel().listAll()
+            );
+            usersResource.get(userId).roles().realmLevel().add(roles);
+        }
+
+        return toUserResponse(usersResource.get(userId).toRepresentation());
     }
+
 
     @Override
     public void deleteUser(String userId) {
-        KeycloakProvider.getUserResource().get(userId).remove();
+        try {
+            usersResource.get(userId).remove();
+        } catch (Exception e) {
+            throw new KeyCloakUserExceptions.KeycloakOperationException("Failed to delete user with ID: " + userId);
+        }
     }
-
 
 }
