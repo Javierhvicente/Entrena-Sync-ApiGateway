@@ -5,6 +5,7 @@ import entrenasync.dev.entrenasyncapigateway.Auth.Exception.SessionExceptions;
 import entrenasync.dev.entrenasyncapigateway.Auth.dto.LoginRequest;
 import entrenasync.dev.entrenasyncapigateway.Auth.dto.LoginResponse;
 import jakarta.ws.rs.core.HttpHeaders;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -15,6 +16,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 public class SessionServiceImpl implements SessionService {
 
@@ -31,6 +33,8 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public Mono<LoginResponse> login(LoginRequest request) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        log.info("request user: " + request.getUsername());
+        log.info("request user pas: " + request.getPassword());
         return webClient.post()
                 .uri("/protocol/openid-connect/token")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
