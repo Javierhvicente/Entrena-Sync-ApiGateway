@@ -26,6 +26,7 @@ public class SecurityConfiguration {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/keycloak/*").hasRole("admin")
                         .pathMatchers("/workers/**").hasRole("admin")
+                        .pathMatchers("/Exercises/**").hasRole("admin")
                         .pathMatchers("session/*").permitAll()
                         .anyExchange().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
