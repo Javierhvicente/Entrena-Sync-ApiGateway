@@ -1,25 +1,18 @@
 package entrenasync.dev.entrenasyncapigateway.User.Services;
 
-import entrenasync.dev.entrenasyncapigateway.Auth.Config.KeycloakProperties;
-import entrenasync.dev.entrenasyncapigateway.Auth.KeycloakProvider;
+import entrenasync.dev.entrenasyncapigateway.Auth.Config.KeycloakProvider;
 import entrenasync.dev.entrenasyncapigateway.Exceptions.KeyCloakUserExceptions;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserRequest;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserResponse;
-import entrenasync.dev.entrenasyncapigateway.User.Services.KeycloakUserService;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 import org.keycloak.OAuth2Constants;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -49,8 +42,7 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
                         user.getUsername(),
                         user.getEmail(),
                         user.getFirstName(),
-                        user.getLastName(),
-                        user.getCreatedTimestamp()
+                        user.getLastName()
                 ))
                 .toList();
     }

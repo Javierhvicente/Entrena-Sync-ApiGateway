@@ -8,4 +8,8 @@ public class SessionExceptions extends RuntimeException {
     public static class loginBadCredentialsException extends SessionExceptions {
         public loginBadCredentialsException(String data1, String data2) {super("Login Bad Credentials with " + data1 + "," + data2);}
     }
+
+    public static class noTokenOnRequest extends SessionExceptions{
+        public noTokenOnRequest(){super("No token found on request");}
+    }
 }

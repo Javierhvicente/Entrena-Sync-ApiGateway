@@ -1,4 +1,4 @@
-package entrenasync.dev.entrenasyncapigateway.Auth;
+package entrenasync.dev.entrenasyncapigateway.Auth.Config;
 
 
 import org.springframework.context.annotation.Primary;

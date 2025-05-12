@@ -27,7 +27,6 @@ public class AccessTokenCookieFilter implements WebFilter, Ordered {
                     .build();
             return chain.filter(exchange.mutate().request(mutateRequest).build());
         }
-        log.info("hey");
         return chain.filter(exchange);
     }
 }

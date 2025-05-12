@@ -1,6 +1,5 @@
-package entrenasync.dev.entrenasyncapigateway.Auth;
+package entrenasync.dev.entrenasyncapigateway.Auth.Config;
 
-import entrenasync.dev.entrenasyncapigateway.Auth.Config.KeycloakProperties;
 import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
