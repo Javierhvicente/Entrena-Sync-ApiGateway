@@ -1,6 +1,5 @@
 package entrenasync.dev.entrenasyncapigateway.Auth.Config;
 
-import entrenasync.dev.entrenasyncapigateway.Auth.KeycloakRealmConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;

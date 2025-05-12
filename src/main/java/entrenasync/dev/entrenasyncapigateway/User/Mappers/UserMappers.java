@@ -15,8 +15,7 @@ public final class UserMappers {
                 user.getUsername(),
                 user.getEmail(),
                 user.getFirstName(),
-                user.getLastName(),
-                user.getCreatedTimestamp()
+                user.getLastName()
         );
     }
 }
