@@ -27,11 +27,9 @@ public class UserRequest {
     private String lastName;
 
     @NotBlank(message = "The password is required")
-    @Size(min = 8, message = "The password must have 8 characters at least")
     private String password;
 
     @NotBlank(message = "The password confirmation is required")
-    @Size(min = 8, message = "The password confirmation must match the password")
     private String passwordConfirmation;
 
     private List<String> roles;
