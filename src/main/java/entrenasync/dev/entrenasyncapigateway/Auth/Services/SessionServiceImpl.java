@@ -65,7 +65,6 @@ public class SessionServiceImpl implements SessionService {
                         )
                 )
                 .bodyToMono(LoginResponse.class);
-
     }
 
     @Override

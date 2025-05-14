@@ -34,7 +34,7 @@ public class SessionController {
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<String>> login(
-            @RequestBody LoginRequest request,
+            @Valid @RequestBody LoginRequest request,
             ServerHttpResponse response
     ) {
         return sessionService.login(request).map(loginResponse -> {
