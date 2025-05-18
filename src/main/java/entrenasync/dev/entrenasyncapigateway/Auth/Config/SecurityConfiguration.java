@@ -26,6 +26,7 @@ public class SecurityConfiguration {
                         .pathMatchers("/keycloak/*").hasRole("admin")
                         .pathMatchers("/workers/**").hasRole("admin")
                         .pathMatchers("/Exercises/**").hasRole("admin")
+                        .pathMatchers("/Clients/**").hasRole("admin")
                         .pathMatchers("/storage/**").permitAll()
                         .pathMatchers("session/*").permitAll()
                         .anyExchange().authenticated())
