@@ -2,11 +2,10 @@ package entrenasync.dev.entrenasyncapigateway.Auth.Services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import entrenasync.dev.entrenasyncapigateway.Auth.Config.KeycloakProperties;
-import entrenasync.dev.entrenasyncapigateway.Auth.Exception.SessionExceptions;
+import entrenasync.dev.entrenasyncapigateway.Auth.Exceptions.SessionExceptions;
 import entrenasync.dev.entrenasyncapigateway.Auth.dto.LoginRequest;
 import entrenasync.dev.entrenasyncapigateway.Auth.dto.LoginResponse;
 import entrenasync.dev.entrenasyncapigateway.Auth.dto.UserAuthResponse;
-import entrenasync.dev.entrenasyncapigateway.User.Dto.UserResponse;
 import jakarta.ws.rs.core.HttpHeaders;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

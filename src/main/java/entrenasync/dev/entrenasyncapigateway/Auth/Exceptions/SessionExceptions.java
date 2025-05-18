@@ -1,4 +1,4 @@
-package entrenasync.dev.entrenasyncapigateway.Auth.Exception;
+package entrenasync.dev.entrenasyncapigateway.Auth.Exceptions;
 
 public class SessionExceptions extends RuntimeException {
     public SessionExceptions(String message) {
