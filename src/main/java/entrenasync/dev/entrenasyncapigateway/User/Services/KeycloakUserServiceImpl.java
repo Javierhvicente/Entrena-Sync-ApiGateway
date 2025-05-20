@@ -33,6 +33,7 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
 
     @Override
     public List<UserResponse> getAllUsers() {
+        log.info("Getting all users");
         return keycloakProvider.realmResource()
                 .users()
                 .list()

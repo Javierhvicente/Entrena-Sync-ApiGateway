@@ -23,9 +23,12 @@ public class SecurityConfiguration {
         return httpSecurity
                 .cors(withDefaults())
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/keycloak/*").hasRole("admin")
+                        .pathMatchers("/keycloak/**").hasRole("admin")
                         .pathMatchers("/workers/**").hasRole("admin")
-                        .pathMatchers("session/*").permitAll()
+                        .pathMatchers("/Exercises/**").hasRole("admin")
+                        .pathMatchers("/Clients/**").hasRole("admin")
+                        .pathMatchers("/storage/**").permitAll()
+                        .pathMatchers("session/**").permitAll()
                         .anyExchange().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(accessDeniedHandler())
