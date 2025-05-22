@@ -1,7 +1,7 @@
 package entrenasync.dev.entrenasyncapigateway.User.Services;
 
 import entrenasync.dev.entrenasyncapigateway.Auth.Config.KeycloakProvider;
-import entrenasync.dev.entrenasyncapigateway.Auth.Exceptions.KeyCloakUserExceptions;
+import entrenasync.dev.entrenasyncapigateway.User.Exceptions.KeyCloakUserExceptions;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserRequest;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserResponse;
 import jakarta.ws.rs.core.Response;

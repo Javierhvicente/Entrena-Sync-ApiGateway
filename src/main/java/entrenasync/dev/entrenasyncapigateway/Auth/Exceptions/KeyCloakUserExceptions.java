@@ -1,5 +1,5 @@
-package entrenasync.dev.entrenasyncapigateway.Auth.Exceptions;
 
+package entrenasync.dev.entrenasyncapigateway.Auth.Exceptions;
 public class KeyCloakUserExceptions extends RuntimeException {
 
     public KeyCloakUserExceptions(String message) {
