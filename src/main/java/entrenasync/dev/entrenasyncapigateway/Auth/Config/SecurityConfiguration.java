@@ -2,6 +2,7 @@ package entrenasync.dev.entrenasyncapigateway.Auth.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -21,12 +22,20 @@ public class SecurityConfiguration {
     @Bean("securityWebFilterChainEntrenaSync")
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity) {
         return httpSecurity
-                .cors(withDefaults())
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/keycloak/**").hasRole("admin")
+                        .pathMatchers(HttpMethod.DELETE,"/keycloak/user/**").hasRole("admin")
+                        .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .pathMatchers(HttpMethod.PUT,"/keycloak/user/**").hasRole("admin")
+                        .pathMatchers(HttpMethod.GET, "/keycloak/user/**").hasRole("admin")
+                        .pathMatchers(HttpMethod.POST, "/keycloak/user").permitAll()
                         .pathMatchers("/workers/**").hasRole("admin")
                         .pathMatchers("/Exercises/**").hasRole("admin")
-                        .pathMatchers("/Clients/**").hasRole("admin")
+                        .pathMatchers( HttpMethod.PUT,"/Clients").hasAnyRole("admin", "client")
+                        .pathMatchers(HttpMethod.POST, "/Clients").permitAll()
+                        .pathMatchers( HttpMethod.PATCH,"/Clients/**").hasAnyRole("admin", "client")
+                        .pathMatchers( HttpMethod.GET,"/Clients/{id}").hasAnyRole("admin", "client")
+                        .pathMatchers( HttpMethod.GET,"/Clients/**").hasRole("admin")
+                        .pathMatchers( HttpMethod.DELETE,"/Clients/**").hasAnyRole("admin", "client")
                         .pathMatchers("/storage/**").permitAll()
                         .pathMatchers("session/**").permitAll()
                         .anyExchange().authenticated())

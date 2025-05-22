@@ -59,7 +59,6 @@ public class SessionController {
 
             response.addCookie(accessToken);
             response.addCookie(refreshToken);
-
             return ResponseEntity.ok("Login successful");
         });
     }
