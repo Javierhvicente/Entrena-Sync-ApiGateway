@@ -1,9 +1,10 @@
 package entrenasync.dev.entrenasyncapigateway.User.Services;
 
 import entrenasync.dev.entrenasyncapigateway.Auth.Config.KeycloakProvider;
-import entrenasync.dev.entrenasyncapigateway.User.Exceptions.KeyCloakUserExceptions;
+import entrenasync.dev.entrenasyncapigateway.Auth.Exceptions.KeyCloakUserExceptions;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserRequest;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserResponse;
+import entrenasync.dev.entrenasyncapigateway.Utils.PagedResponse;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.OAuth2Constants;
@@ -32,12 +33,24 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
     }
 
     @Override
-    public List<UserResponse> getAllUsers() {
-        log.info("Getting all users");
-        return keycloakProvider.realmResource()
+    public PagedResponse<UserResponse> getAllUsers(int page, int size) {
+        log.info("Getting users - page: {}, size: {}", page, size);
+
+        int first = page * size;
+
+        // Obtener usuarios paginados
+        List<UserRepresentation> userPage = keycloakProvider.realmResource()
                 .users()
-                .list()
-                .stream()
+                .list(first, size);
+
+        int totalElements = keycloakProvider.realmResource()
+                .users()
+                .count();
+
+        // Calcular total de páginas
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        List<UserResponse> content = userPage.stream()
                 .map(user -> new UserResponse(
                         user.getId(),
                         user.getUsername(),
@@ -46,7 +59,10 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
                         user.getLastName()
                 ))
                 .toList();
+
+        return new PagedResponse<>(content, page, size, totalElements, totalPages);
     }
+
 
     @Override
     public UserResponse getUserByUsername(String username) {
