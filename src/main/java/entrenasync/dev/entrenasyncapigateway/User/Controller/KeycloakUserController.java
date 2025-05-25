@@ -3,6 +3,7 @@ package entrenasync.dev.entrenasyncapigateway.User.Controller;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserRequest;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserResponse;
 import entrenasync.dev.entrenasyncapigateway.User.Services.KeycloakUserService;
+import entrenasync.dev.entrenasyncapigateway.Utils.PagedResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +21,13 @@ public class KeycloakUserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getAllUsers(){
-        return ResponseEntity.ok(keycloakUserService.getAllUsers());
+    public ResponseEntity<PagedResponse<UserResponse>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(keycloakUserService.getAllUsers(page, size));
     }
+
 
     @GetMapping("/{username}")
     public ResponseEntity<UserResponse> getUserByUsername(@PathVariable String username){

@@ -2,10 +2,11 @@ package entrenasync.dev.entrenasyncapigateway.User.Services;
 
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserRequest;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserResponse;
+import entrenasync.dev.entrenasyncapigateway.Utils.PagedResponse;
 
 import java.util.List;
 public interface KeycloakUserService {
-    List<UserResponse> getAllUsers();
+    PagedResponse<UserResponse> getAllUsers(int page, int size);
     UserResponse getUserByUsername(String username);
     UserResponse createUser(UserRequest userRequest);
     UserResponse updateUser(UserRequest userRequest, String userId);
