@@ -32,7 +32,7 @@ public class SecurityConfiguration {
                         .pathMatchers("/Workouts/**").hasAnyRole("admin", "Client")
                         .pathMatchers("/Exercises/**").permitAll()
                         .pathMatchers(HttpMethod.GET, "/Exercises").permitAll()
-                        .pathMatchers( HttpMethod.PUT,"/Clients").hasAnyRole("admin", "Client")
+                        .pathMatchers( HttpMethod.PUT,"/Clients/**").hasAnyRole("admin", "Client")
                         .pathMatchers(HttpMethod.POST, "/Clients").permitAll()
                         .pathMatchers( HttpMethod.PATCH,"/Clients/**").hasAnyRole("admin", "Client")
                         .pathMatchers( HttpMethod.GET,"/Clients/user/{id}").hasAnyRole("admin", "Client")
