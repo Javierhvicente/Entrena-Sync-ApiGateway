@@ -2,6 +2,7 @@ package entrenasync.dev.entrenasyncapigateway.User.Controller;
 
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserRequest;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserResponse;
+import entrenasync.dev.entrenasyncapigateway.User.Dto.UserUpdateRequest;
 import entrenasync.dev.entrenasyncapigateway.User.Services.KeycloakUserService;
 import entrenasync.dev.entrenasyncapigateway.Utils.PagedResponse;
 import jakarta.validation.Valid;
@@ -39,8 +40,8 @@ public class KeycloakUserController {
         return ResponseEntity.ok(keycloakUserService.createUser(userRequest));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable String userId, @RequestBody @Valid UserRequest userRequest){
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserResponse> updateUser(@PathVariable("userId") String userId, @RequestBody @Valid UserUpdateRequest userRequest){
         return ResponseEntity.ok(keycloakUserService.updateUser(userRequest, userId));
     }
 
