@@ -4,11 +4,13 @@ import entrenasync.dev.entrenasyncapigateway.Auth.Config.KeycloakProvider;
 import entrenasync.dev.entrenasyncapigateway.Auth.Exceptions.KeyCloakUserExceptions;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserRequest;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserResponse;
+import entrenasync.dev.entrenasyncapigateway.User.Dto.UserUpdateRequest;
 import entrenasync.dev.entrenasyncapigateway.Utils.PagedResponse;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
@@ -144,25 +146,38 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
     }
 
     @Override
-    public UserResponse updateUser(UserRequest userRequest, String userId) {
-        CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
-        credentialRepresentation.setTemporary(false);
-        credentialRepresentation.setType(OAuth2Constants.PASSWORD);
-        credentialRepresentation.setValue(userRequest.getPassword());
+    public UserResponse updateUser(UserUpdateRequest userRequest, String userId) {
+        UserResource userResource = keycloakProvider.usersResource(keycloakProvider.realmResource()).get(userId);
+        UserRepresentation user = userResource.toRepresentation();
 
-        UserRepresentation user = new UserRepresentation();
-        user.setUsername(userRequest.getUsername());
-        user.setEmail(userRequest.getEmail());
-        user.setFirstName(userRequest.getFirstName());
-        user.setLastName(userRequest.getLastName());
-        user.setEnabled(true);
-        user.setCredentials(Collections.singletonList(credentialRepresentation));
+        if (userRequest.getEmail() != null) {
+            user.setEmail(userRequest.getEmail());
+            user.setUsername(userRequest.getEmail());
+        }
 
-        keycloakProvider.usersResource(keycloakProvider.realmResource()).get(userId).update(user);
+        if (userRequest.getFirstName() != null) {
+            user.setFirstName(userRequest.getFirstName());
+        }
 
-        UserRepresentation updated = keycloakProvider.usersResource(keycloakProvider.realmResource()).get(userId).toRepresentation();
+        if (userRequest.getLastName() != null) {
+            user.setLastName(userRequest.getLastName());
+        }
+
+        if (userRequest.getPassword() != null) {
+            CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+            credentialRepresentation.setTemporary(false);
+            credentialRepresentation.setType(OAuth2Constants.PASSWORD);
+            credentialRepresentation.setValue(userRequest.getPassword());
+
+            user.setCredentials(Collections.singletonList(credentialRepresentation));
+        }
+
+        userResource.update(user);
+
+        UserRepresentation updated = userResource.toRepresentation();
         return toUserResponse(updated);
     }
+
 
     @Override
     public void deleteUser(String userId) {
