@@ -2,7 +2,7 @@ name: CI Pipeline
 
 on:
     push:
-        branches: ["main"]
+        branches: ["develop"]
 
 jobs:
     build:
@@ -17,7 +17,6 @@ jobs:
               run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
             - name: Build the Docker image
-              run: docker build -t alvaroherrero/entrena-sync-apigateway .
+              run: docker build -t alvaroherrero/entrena-sync-apigateway -f DockerfileDev .
             - name: Push to Dockerhub
               run: docker push alvaroherrero/entrena-sync-apigateway:latest
-# dummy
