@@ -1,19 +1,22 @@
 name: CD Pipeline
 
 on:
-    workflow_run:
-        workflows: ["CI Pipeline"]
-        types:
-            - completed
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
 
 jobs:
-    build:
-        runs-on: self-hosted
+  build:
+    runs-on: self-hosted
 
-        steps:
-            - name: Pull Docker image
-              run: sudo docker pull alvaroherrero/entrena-sync-apigateway:latest
-            - name: Delete Old docker container
-              run: sudo docker rm -f entrena-sync-apigateway-container || true
-            - name: Run Docker Container
-              run: sudo docker run -d -p 8080:80 --name entrena-sync-apigateway-container alvaroherrero/entrena-sync-apigateway
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Descargar última versión de la imagen
+        run: |
+          sudo docker-compose -f ../../Docker.Compose.yml pull entrena-sync-apigateway
+
+      - name: Deploy con docker-compose (working-directory)
+        run: sudo docker-compose -f ../../Docker.Compose.yml --env-file ../../.env.apigetaway -p entrena-sync up -d entrena-sync-apigateway --build
