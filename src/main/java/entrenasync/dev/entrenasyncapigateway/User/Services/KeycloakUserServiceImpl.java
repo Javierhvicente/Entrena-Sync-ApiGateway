@@ -5,6 +5,7 @@ import entrenasync.dev.entrenasyncapigateway.Auth.Exceptions.KeyCloakUserExcepti
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserRequest;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserResponse;
 import entrenasync.dev.entrenasyncapigateway.User.Dto.UserUpdateRequest;
+import entrenasync.dev.entrenasyncapigateway.User.Mappers.UserMappers;
 import entrenasync.dev.entrenasyncapigateway.Utils.PagedResponse;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -33,40 +34,58 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
     }
 
     @Override
-    public PagedResponse<UserResponse> getAllUsers(int page, int size) {
-        log.info("Getting users - page: {}, size: {}", page, size);
+    public PagedResponse<UserResponse> getAllUsers(int page, int size, String type) {
+        log.info("Getting users - page: {}, size: {}, type filter: {}", page, size, type);
 
-        int first = page * size;
-
-        // Obtener usuarios paginados
-        List<UserRepresentation> userPage = keycloakProvider.realmResource()
+        // Obtener todos los usuarios
+        List<UserRepresentation> allUsers = keycloakProvider.realmResource()
                 .users()
-                .list(first, size);
+                .list();
 
-        int totalElements = keycloakProvider.realmResource()
-                .users()
-                .count();
+        List<UserRepresentation> filteredUsers;
 
-        // Calcular total de páginas
+        // Aplicar filtro solo si se especifica un tipo
+        if (type != null && !type.trim().isEmpty()) {
+            log.info("Applying type filter: {}", type);
+
+            filteredUsers = allUsers.stream()
+                    .filter(user -> {
+                        if (user.getAttributes() == null) return false;
+
+                        List<String> typeValues = user.getAttributes().get("type");
+                        if (typeValues == null || typeValues.isEmpty()) {
+                            // También buscar con "Type" (mayúscula) por compatibilidad
+                            typeValues = user.getAttributes().get("Type");
+                        }
+
+                        return typeValues != null &&
+                                typeValues.stream().anyMatch(t -> t.equalsIgnoreCase(type));
+                    })
+                    .toList();
+
+            log.info("Found {} users of type '{}' out of {} total users",
+                    filteredUsers.size(), type, allUsers.size());
+        } else {
+            log.info("No type filter applied, returning all users");
+            filteredUsers = allUsers;
+        }
+
+        // Aplicar paginación manual
+        int totalElements = filteredUsers.size();
         int totalPages = (int) Math.ceil((double) totalElements / size);
+        int start = page * size;
+        int end = Math.min(start + size, totalElements);
 
-        List<UserResponse> content = userPage.stream()
-                .map(user -> {
-                    // Debug logging
-                    log.debug("Processing user: {} with attributes: {}",
-                            user.getUsername(), user.getAttributes());
+        // Validar que start no sea mayor que el total de elementos
+        if (start >= totalElements) {
+            return new PagedResponse<>(List.of(), page, size, totalElements, totalPages);
+        }
 
-                    String type = extractAttributeValue(user, "Type");
+        List<UserRepresentation> pagedUsers = filteredUsers.subList(start, end);
 
-                    return new UserResponse(
-                            user.getId(),
-                            user.getUsername(),
-                            user.getEmail(),
-                            type,
-                            user.getFirstName(),
-                            user.getLastName()
-                    );
-                })
+        // Convertir a UserResponse
+        List<UserResponse> content = pagedUsers.stream()
+                .map(UserMappers::toUserResponse)
                 .toList();
 
         return new PagedResponse<>(content, page, size, totalElements, totalPages);

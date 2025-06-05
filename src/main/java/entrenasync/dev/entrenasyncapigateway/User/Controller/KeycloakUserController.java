@@ -24,9 +24,11 @@ public class KeycloakUserController {
     @GetMapping
     public ResponseEntity<PagedResponse<UserResponse>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        return ResponseEntity.ok(keycloakUserService.getAllUsers(page, size));
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String type) {
+
+        PagedResponse<UserResponse> users = keycloakUserService.getAllUsers(page, size, type);
+        return ResponseEntity.ok(users);
     }
 
 

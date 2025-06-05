@@ -19,7 +19,7 @@ public final class UserMappers {
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                String.valueOf(UserRequest.Type.valueOf(String.valueOf(type))),
+                type != null ? type.name() : null,
                 user.getFirstName(),
                 user.getLastName()
         );
