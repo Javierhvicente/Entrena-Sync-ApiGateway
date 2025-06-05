@@ -40,6 +40,11 @@ public class SecurityConfiguration {
                         .pathMatchers( HttpMethod.GET,"/Clients/{id}").hasRole("admin")
                         .pathMatchers( HttpMethod.DELETE,"/Clients/**").hasAnyRole("admin", "Client")
                         .pathMatchers("/storage/**").permitAll()
+                        .pathMatchers(HttpMethod.GET,"/workers").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/workers/{id}").hasAnyRole("admin", "Worker")
+                        .pathMatchers(HttpMethod.POST, "/workers").hasRole("admin")
+                        .pathMatchers(HttpMethod.PUT, "/workers/{id}").hasRole("admin")
+                        .pathMatchers(HttpMethod.DELETE, "/workers/{id}").hasRole("admin")
                         .pathMatchers("session/**").permitAll()
                         .anyExchange().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling

@@ -18,9 +18,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static entrenasync.dev.entrenasyncapigateway.User.Mappers.UserMappers.toUserResponse;
 
@@ -53,16 +51,42 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
         List<UserResponse> content = userPage.stream()
-                .map(user -> new UserResponse(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getFirstName(),
-                        user.getLastName()
-                ))
+                .map(user -> {
+                    // Debug logging
+                    log.debug("Processing user: {} with attributes: {}",
+                            user.getUsername(), user.getAttributes());
+
+                    String type = extractAttributeValue(user, "Type");
+
+                    return new UserResponse(
+                            user.getId(),
+                            user.getUsername(),
+                            user.getEmail(),
+                            type,
+                            user.getFirstName(),
+                            user.getLastName()
+                    );
+                })
                 .toList();
 
         return new PagedResponse<>(content, page, size, totalElements, totalPages);
+    }
+
+    private String extractAttributeValue(UserRepresentation user, String attributeName) {
+        if (user.getAttributes() == null) {
+            log.debug("No attributes found for user: {}", user.getUsername());
+            return null;
+        }
+
+        List<String> attributeValues = user.getAttributes().get(attributeName);
+        if (attributeValues == null || attributeValues.isEmpty()) {
+            log.debug("Attribute '{}' not found for user: {}", attributeName, user.getUsername());
+            return null;
+        }
+
+        String value = attributeValues.get(0);
+        log.debug("Found attribute '{}' = '{}' for user: {}", attributeName, value, user.getUsername());
+        return value;
     }
 
 
@@ -108,6 +132,10 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
         user.setLastName(userRequest.getLastName());
         user.setEnabled(true);
 
+
+        Map<String, List<String>> attributes = new HashMap<>();
+        attributes.put("Type", List.of(userRequest.getType().name()));
+        user.setAttributes(attributes);
         Response response = userResource.create(user);
         var status = response.getStatus();
 
@@ -170,6 +198,15 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
             credentialRepresentation.setValue(userRequest.getPassword());
 
             user.setCredentials(Collections.singletonList(credentialRepresentation));
+        }
+
+        if (userRequest.getType() != null) {
+            Map<String, List<String>> attributes = user.getAttributes();
+            if (attributes == null) {
+                attributes = new HashMap<>();
+            }
+            attributes.put("Type", List.of(userRequest.getType().name()));
+            user.setAttributes(attributes);
         }
 
         userResource.update(user);

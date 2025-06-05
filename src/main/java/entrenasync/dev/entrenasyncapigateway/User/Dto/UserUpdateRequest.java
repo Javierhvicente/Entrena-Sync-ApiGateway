@@ -22,6 +22,8 @@ public class UserUpdateRequest {
 
     private String password;
 
+    private UserRequest.Type type;
+
     private String passwordConfirmation;
 
     private List<String> roles;

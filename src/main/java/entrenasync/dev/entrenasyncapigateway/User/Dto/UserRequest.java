@@ -2,6 +2,7 @@ package entrenasync.dev.entrenasyncapigateway.User.Dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -25,6 +26,9 @@ public class UserRequest {
     @NotBlank(message = "The last name")
     private String lastName;
 
+    @NotNull(message = "The user type is required")
+    private Type type;
+
     @NotBlank(message = "The password is required")
     private String password;
 
@@ -32,4 +36,10 @@ public class UserRequest {
     private String passwordConfirmation;
 
     private List<String> roles;
+
+    public enum Type {
+        admin,
+        client,
+        worker,
+    }
 }
