@@ -43,7 +43,8 @@ public class SessionController {
             ResponseCookie accessToken = ResponseCookie.from("access_token", loginResponse.getAccessToken())
                     .httpOnly(true)
                     .secure(secureCookies)
-                    .sameSite("Strict")
+                    .sameSite("None")
+                    .domain("https://entrena-sync.netlify.app")
                     .path("/")
                     .maxAge(loginResponse.getExpiresIn())
                     .build();
@@ -52,7 +53,8 @@ public class SessionController {
             ResponseCookie refreshToken = ResponseCookie.from("refresh_token", loginResponse.getRefreshToken())
                     .httpOnly(true)
                     .secure(secureCookies)
-                    .sameSite("Strict")
+                    .sameSite("None")
+                    .domain("https://entrena-sync.netlify.app")
                     .path("/")
                     .maxAge(loginResponse.getRefreshExpiresIn())
                     .build();
