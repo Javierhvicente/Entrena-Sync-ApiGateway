@@ -26,6 +26,8 @@ import java.util.Map;
 public class SessionController {
     @Value("${cookies.secure}")
     private boolean secureCookies;
+    @Value("${cookies.domain}")
+    private String cookieDomain;
     private final SessionService sessionService;
     @Autowired
     public SessionController(SessionService sessionService) {
@@ -44,7 +46,7 @@ public class SessionController {
                     .httpOnly(true)
                     .secure(secureCookies)
                     .sameSite("None")
-                    .domain("https://entrena-sync.netlify.app")
+                    .domain(cookieDomain)
                     .path("/")
                     .maxAge(loginResponse.getExpiresIn())
                     .build();
@@ -54,7 +56,7 @@ public class SessionController {
                     .httpOnly(true)
                     .secure(secureCookies)
                     .sameSite("None")
-                    .domain("https://entrena-sync.netlify.app")
+                    .domain(cookieDomain)
                     .path("/")
                     .maxAge(loginResponse.getRefreshExpiresIn())
                     .build();
