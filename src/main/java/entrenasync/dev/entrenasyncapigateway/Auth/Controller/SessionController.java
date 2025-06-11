@@ -26,8 +26,6 @@ import java.util.Map;
 public class SessionController {
     @Value("${cookies.secure}")
     private boolean secureCookies;
-    @Value("${cookies.domain}")
-    private String cookieDomain;
     private final SessionService sessionService;
     @Autowired
     public SessionController(SessionService sessionService) {
@@ -45,8 +43,7 @@ public class SessionController {
             ResponseCookie accessToken = ResponseCookie.from("access_token", loginResponse.getAccessToken())
                     .httpOnly(true)
                     .secure(secureCookies)
-                    .sameSite("None")
-                    .domain(cookieDomain)
+                    .sameSite("Strict")
                     .path("/")
                     .maxAge(loginResponse.getExpiresIn())
                     .build();
@@ -55,8 +52,7 @@ public class SessionController {
             ResponseCookie refreshToken = ResponseCookie.from("refresh_token", loginResponse.getRefreshToken())
                     .httpOnly(true)
                     .secure(secureCookies)
-                    .sameSite("None")
-                    .domain(cookieDomain)
+                    .sameSite("Strict")
                     .path("/")
                     .maxAge(loginResponse.getRefreshExpiresIn())
                     .build();
