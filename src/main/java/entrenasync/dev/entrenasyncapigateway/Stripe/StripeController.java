@@ -32,9 +32,8 @@ public class StripeController {
 
     @PostMapping("/create-checkout-session")
     public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody PaymenRequest request) throws StripeException {
-        // Puedes usar los datos de `request` para incluir info personalizada
-        String serviceName = request.getServiceName(); // opcional
-        Long amount = request.getAmount(); // en céntimos (ej: 1500 = 15€)
+        String serviceName = request.getServiceName();
+        Long amount = request.getAmount();
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
@@ -70,11 +69,9 @@ public class StripeController {
             return ResponseEntity.badRequest().body("Session ID is missing");
         }
 
-        // Recupera la sesión desde Stripe
         Session session = Session.retrieve(sessionId);
 
         if ("paid".equals(session.getPaymentStatus())) {
-            // 🔁 Aquí haces tu lógica: guardar pago, activar subscripción, etc.
             return ResponseEntity.ok("Pago confirmado correctamente (dummy)");
         } else {
             return ResponseEntity.status(400).body("El pago no se ha completado");

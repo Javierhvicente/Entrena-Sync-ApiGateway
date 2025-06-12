@@ -14,5 +14,6 @@ public class UserAuthResponse {
     private String email;
     private String firstName;
     private String lastName;
+    private String type;
     private List<String> roles;
 }

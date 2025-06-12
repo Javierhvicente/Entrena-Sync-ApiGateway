@@ -35,7 +35,7 @@ public class SecurityConfiguration {
                         .pathMatchers(HttpMethod.POST, "/Clients").permitAll()
                         .pathMatchers( HttpMethod.PATCH,"/Clients/**").hasAnyRole("admin", "Client")
                         .pathMatchers( HttpMethod.GET,"/Clients/user/{id}").hasAnyRole("admin", "Client")
-                        .pathMatchers( HttpMethod.GET,"/Clients").hasRole("admin")
+                        .pathMatchers( HttpMethod.GET,"/Clients").hasAnyRole("admin", "Worker")
                         .pathMatchers( HttpMethod.GET,"/Clients/{id}").hasRole("admin")
                         .pathMatchers( HttpMethod.DELETE,"/Clients/**").hasAnyRole("admin", "Client")
                         .pathMatchers("/storage/**").permitAll()

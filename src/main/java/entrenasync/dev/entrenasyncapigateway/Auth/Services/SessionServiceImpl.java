@@ -98,6 +98,7 @@ public class SessionServiceImpl implements SessionService {
                             json.path("email").asText(),
                             json.path("given_name").asText(),
                             json.path("family_name").asText(),
+                            json.path("Type").asText(),
                             roles
                     );
                 });
