@@ -21,7 +21,7 @@ FROM eclipse-temurin:21-jre-jammy AS runtime
 WORKDIR /app
 
 COPY --from=build /app/build/libs/*.jar /app/my-app.jar
-COPY --from=build /app/ssl-certs/keystore.p12 /app/keystore.p12
+COPY --from=build /app/ssl-certs/certificate.pfx /app/certificate.pfx
 
 EXPOSE 8080
 #dummy
