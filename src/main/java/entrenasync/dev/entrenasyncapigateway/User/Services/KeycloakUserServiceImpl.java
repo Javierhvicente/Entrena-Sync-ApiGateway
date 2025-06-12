@@ -108,7 +108,6 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
         return value;
     }
 
-
     @Override
     public UserResponse getUserByUsername(String username) {
         UserRepresentation user = keycloakProvider.realmResource()
